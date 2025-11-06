@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cash System - AI Services</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        .services {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+        }
+        .services h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .service-card {
+            border: 2px solid #e0e0e0;
+            padding: 25px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .service-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+        .service-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .service-card .price {
+            color: #333;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        .service-card .rush-price {
+            color: #764ba2;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        .api-info {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .api-info h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .api-info code {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            display: block;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        .endpoint {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+        .endpoint h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .status-running {
+            background: #4caf50;
+            color: white;
+        }
+        .status-warning {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Cash System</h1>
+            <p>AI-Powered Professional Services Platform</p>
+            <div class="status-badge status-running" id="status">✅ API Running</div>
+        </div>
+
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <h3 id="total-jobs">0</h3>
+                <p>Total Completed Jobs</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="total-revenue">$0</h3>
+                <p>Total Revenue</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="pending-jobs">0</h3>
+                <p>Pending Jobs</p>
+            </div>
+        </div>
+
+        <div class="services">
+            <h2>Available Services</h2>
+            <div class="service-grid" id="services-grid">
+                <!-- Services will be loaded here -->
+            </div>
+        </div>
+
+        <div class="api-info">
+            <h2>API Documentation</h2>
+            
+            <div class="endpoint">
+                <h3>GET /api/services</h3>
+                <p>Get list of available services and pricing</p>
+                <code>curl http://localhost:8000/api/services</code>
+            </div>
+
+            <div class="endpoint">
+                <h3>POST /api/quote</h3>
+                <p>Get a price quote for a service</p>
+                <code>curl -X POST http://localhost:8000/api/quote \
+  -H "Content-Type: application/json" \
+  -d '{"service_type": "resume_optimization", "customer_email": "test@example.com", "input_data": {}, "rush": false}'</code>
+            </div>
+
+            <div class="endpoint">
+                <h3>POST /api/create-order</h3>
+                <p>Create a new order (demo mode without payment)</p>
+                <code>curl -X POST http://localhost:8000/api/create-order \
+  -H "Content-Type: application/json" \
+  -d '{"service_type": "business_name", "customer_email": "test@example.com", "input_data": {"industry": "tech", "description": "AI startup"}, "rush": false}'</code>
+            </div>
+
+            <div class="endpoint">
+                <h3>GET /api/job/{job_id}</h3>
+                <p>Check job status and get results</p>
+                <code>curl http://localhost:8000/api/job/YOUR_JOB_ID</code>
+            </div>
+
+            <div class="endpoint">
+                <h3>GET /api/stats</h3>
+                <p>Get system statistics</p>
+                <code>curl http://localhost:8000/api/stats</code>
+            </div>
+
+            <div class="endpoint">
+                <h3>Interactive API Docs</h3>
+                <p>Visit <a href="/docs" style="color: #667eea; font-weight: bold;">/docs</a> for interactive Swagger UI documentation</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                document.getElementById('total-jobs').textContent = data.total_completed;
+                document.getElementById('total-revenue').textContent = '$' + data.total_revenue.toFixed(2);
+                document.getElementById('pending-jobs').textContent = data.pending_jobs;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load services
+        async function loadServices() {
+            try {
+                const response = await fetch('/api/services');
+                const data = await response.json();
+                const grid = document.getElementById('services-grid');
+                
+                data.services.forEach(service => {
+                    const card = document.createElement('div');
+                    card.className = 'service-card';
+                    card.innerHTML = `
+                        <h3>${service.name}</h3>
+                        <div class="price">$${service.base_price}</div>
+                        <div class="rush-price">Rush: $${service.rush_price}</div>
+                        <p style="color: #666;">Delivery: 6-12 hours (1 hour rush)</p>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading services:', error);
+                document.getElementById('status').textContent = '⚠️ API Error';
+                document.getElementById('status').className = 'status-badge status-warning';
+            }
+        }
+
+        // Load data on page load
+        loadStats();
+        loadServices();
+
+        // Refresh stats every 10 seconds
+        setInterval(loadStats, 10000);
+    </script>
+</body>
+</html>
